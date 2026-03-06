@@ -1,86 +1,64 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { designServices, objectTypesDesign, formatPrice } from '@/data/pricing';
 
-interface PriceItem {
-  name: string;
-  price: string;
-  unit: string;
-  description: string;
-  features: string[];
-  popular?: boolean;
-}
-
-const fallbackData: PriceItem[] = [
-  {
-    name: 'Обмерный план',
-    price: '1 500',
-    unit: '₸/м²',
-    description: 'Точные замеры помещения с выездом специалиста',
-    features: ['Выезд на объект', 'Обмерный чертёж', 'Фотофиксация', 'Срок: 2-3 дня'],
-  },
+const serviceCards = [
   {
     name: 'Дизайн-проект',
-    price: '5 000',
+    description: 'Полный комплект чертежей и планировочных решений для вашего пространства',
+    price: formatPrice(designServices[0].prices['Квартира']),
     unit: '₸/м²',
-    description: 'Полный дизайн-проект интерьера под ключ',
     features: [
-      'Планировочное решение',
-      '3D-визуализация',
-      'Рабочая документация',
-      'Подбор материалов',
-      'Спецификация мебели',
+      'Обмер и техническое задание',
+      'Планировочные решения',
+      'Чертежи всех помещений',
+      'Спецификация материалов',
     ],
     popular: true,
   },
   {
-    name: 'Авторский надзор',
-    price: '3 000',
+    name: '3D-визуализация',
+    description: 'Фотореалистичные рендеры вашего будущего интерьера',
+    price: formatPrice(designServices[1].prices['Квартира']),
     unit: '₸/м²',
-    description: 'Контроль реализации проекта на всех этапах',
     features: [
-      'Выезды на объект',
-      'Контроль качества',
-      'Корректировки проекта',
-      'Согласование материалов',
+      'Фотореалистичные рендеры',
+      '2–3 ракурса на помещение',
+      '2 варианта стилистики',
+      'Корректировки включены',
     ],
   },
   {
-    name: '3D-визуализация',
-    price: '50 000',
-    unit: '₸/ракурс',
-    description: 'Фотореалистичная визуализация вашего пространства',
-    features: ['Фотореализм', '2 варианта стилистики', '2 корректировки', 'Срок: 5-7 дней'],
+    name: 'Авторский надзор',
+    description: 'Контроль реализации проекта на всех этапах строительства',
+    price: formatPrice(designServices[3].prices['Квартира']),
+    unit: '₸/м²',
+    features: [
+      'Регулярные выезды на объект',
+      'Контроль качества работ',
+      'Согласование с подрядчиками',
+      'Корректировки проекта',
+    ],
+  },
+  {
+    name: 'Комплектация',
+    description: 'Полный подбор материалов, мебели и декора для вашего проекта',
+    price: formatPrice(designServices[4].prices['Квартира']),
+    unit: '₸/м²',
+    features: [
+      'Спецификации материалов',
+      'Шоурум-туры',
+      'Сопровождение закупок',
+      'Контроль поставок',
+    ],
   },
 ];
 
 export default function PriceList() {
-  const [prices, setPrices] = useState<PriceItem[]>(fallbackData);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchPrices() {
-      try {
-        const res = await fetch('/api/prices');
-        if (!res.ok) throw new Error('API error');
-        const data = await res.json();
-        if (data.prices && data.prices.length > 0) {
-          setPrices(data.prices);
-        }
-      } catch {
-        // Use fallback data — already set
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchPrices();
-  }, []);
-
   return (
     <section id="services" className="py-24 sm:py-32 bg-warm-gray/50">
       <div className="mx-auto max-w-7xl px-6 lg:px-12">
-        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -94,12 +72,16 @@ export default function PriceList() {
           <h2 className="font-display text-4xl sm:text-5xl font-light text-graphite tracking-wide">
             Услуги
           </h2>
-          <div className="w-12 h-px bg-accent mx-auto mt-6" />
+          <div className="w-12 h-px bg-accent mx-auto mt-6 mb-6" />
+          <p className="text-muted-dark text-sm max-w-lg mx-auto">
+            Цены указаны для квартир. Стоимость зависит от типа объекта — воспользуйтесь
+            калькулятором ниже для точного расчёта
+          </p>
         </motion.div>
 
         {/* Price cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-          {prices.map((item, idx) => (
+          {serviceCards.map((item, idx) => (
             <motion.div
               key={item.name}
               initial={{ opacity: 0, y: 30 }}
@@ -126,8 +108,9 @@ export default function PriceList() {
               </p>
 
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="font-display text-3xl text-graphite font-semibold">
-                  {loading ? '...' : item.price}
+                <span className="text-[11px] text-muted uppercase tracking-wider">от</span>
+                <span className="font-display text-3xl text-graphite font-semibold ml-1">
+                  {item.price}
                 </span>
                 <span className="text-muted text-sm">{item.unit}</span>
               </div>
@@ -136,10 +119,7 @@ export default function PriceList() {
 
               <ul className="space-y-3 mb-8">
                 {item.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-3 text-sm text-muted-dark"
-                  >
+                  <li key={feature} className="flex items-start gap-3 text-sm text-muted-dark">
                     <span className="w-1 h-1 rounded-full bg-accent mt-2 shrink-0" />
                     {feature}
                   </li>
@@ -160,15 +140,52 @@ export default function PriceList() {
           ))}
         </div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+        {/* Object type price table */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="text-center text-muted text-xs mt-10 tracking-wider"
+          transition={{ duration: 0.8, delay: 0.3 }}
+          className="mt-16 overflow-x-auto"
         >
+          <table className="w-full min-w-[600px] text-sm">
+            <thead>
+              <tr className="border-b border-warm-gray-dark/40">
+                <th className="text-left py-4 text-[11px] tracking-[0.15em] text-muted uppercase font-normal">
+                  Услуга
+                </th>
+                {objectTypesDesign.map((t) => (
+                  <th
+                    key={t}
+                    className="text-right py-4 text-[11px] tracking-[0.15em] text-muted uppercase font-normal px-3"
+                  >
+                    {t}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {designServices.map((svc) => (
+                <tr key={svc.name} className="border-b border-warm-gray-dark/20">
+                  <td className="py-3 text-graphite">{svc.name}</td>
+                  {objectTypesDesign.map((t) => (
+                    <td key={t} className="py-3 text-right text-muted-dark px-3">
+                      {svc.prices[t] === 0 ? (
+                        <span className="text-accent text-xs">Бесплатно</span>
+                      ) : (
+                        <>{formatPrice(svc.prices[t])} ₸</>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </motion.div>
+
+        <p className="text-center text-muted text-xs mt-8 tracking-wider">
           Точная стоимость рассчитывается индивидуально после консультации
-        </motion.p>
+        </p>
       </div>
     </section>
   );

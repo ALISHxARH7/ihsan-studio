@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 
 const navLinks = [
   { href: '#portfolio', label: 'Портфолио' },
@@ -43,14 +44,15 @@ export default function Navigation() {
         <div className="mx-auto max-w-7xl px-6 lg:px-12">
           <div className="flex h-20 items-center justify-between">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-3 group">
-              <span className="font-display text-xl font-semibold tracking-[0.2em] text-graphite uppercase">
-                Ihsan
-              </span>
-              <span className="hidden sm:block w-px h-5 bg-accent-light" />
-              <span className="hidden sm:block text-[10px] tracking-[0.3em] text-muted uppercase">
-                Studio
-              </span>
+            <a href="#" className="flex items-center gap-2 group">
+              <Image
+                src="/logo.svg"
+                alt="IHSAN STUDIO"
+                width={140}
+                height={50}
+                className="h-10 w-auto"
+                priority
+              />
             </a>
 
             {/* Desktop links */}
