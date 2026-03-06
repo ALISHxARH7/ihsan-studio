@@ -12,17 +12,20 @@ export default function Contact() {
     const data = new FormData(form);
 
     try {
-      await fetch('/', {
+      await fetch('/.netlify/functions/contact', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(data as unknown as Record<string, string>).toString(),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: data.get('name'),
+          contact: data.get('contact'),
+          message: data.get('message'),
+        }),
       });
-      setSubmitted(true);
-      form.reset();
     } catch {
-      // Netlify form fallback
-      setSubmitted(true);
+      // fail silently — user still sees success
     }
+    setSubmitted(true);
+    form.reset();
   };
 
   return (
@@ -152,20 +155,7 @@ export default function Contact() {
                 </div>
               </div>
             ) : (
-              <form
-                name="contact"
-                method="POST"
-                data-netlify="true"
-                netlify-honeypot="bot-field"
-                onSubmit={handleSubmit}
-                className="space-y-6"
-              >
-                <input type="hidden" name="form-name" value="contact" />
-                <p className="hidden">
-                  <label>
-                    <input name="bot-field" />
-                  </label>
-                </p>
+              <form onSubmit={handleSubmit} className="space-y-6">
 
                 <div>
                   <label className="block text-[11px] tracking-[0.2em] text-muted uppercase mb-2">
