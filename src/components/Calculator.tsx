@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { sendToTelegram } from '@/lib/telegram';
 import {
   designServices,
   archSections,
@@ -108,25 +109,21 @@ export default function Calculator() {
     e.preventDefault();
     setModal((m) => ({ ...m, submitting: true }));
     try {
-      await fetch('/.netlify/functions/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: modal.name,
-          contact: modal.contact,
-          calculatorData: {
-            tab: mode,
-            objectType: mode === 'design' ? designType : archType,
-            area: mode === 'design' ? area : null,
-            services: selectedSummary,
-            total: `${formatPrice(total)}`,
-          },
-        }),
+      await sendToTelegram({
+        name: modal.name,
+        contact: modal.contact,
+        calculatorData: {
+          tab: mode,
+          objectType: mode === 'design' ? designType : archType,
+          area: mode === 'design' ? area : null,
+          services: selectedSummary,
+          total: `${formatPrice(total)}`,
+        },
       });
-      setModal((m) => ({ ...m, submitting: false, done: true }));
     } catch {
-      setModal((m) => ({ ...m, submitting: false, done: true }));
+      // fail silently — user still sees success
     }
+    setModal((m) => ({ ...m, submitting: false, done: true }));
   };
 
   return (

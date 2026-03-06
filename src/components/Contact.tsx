@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { sendToTelegram } from '@/lib/telegram';
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -12,14 +13,10 @@ export default function Contact() {
     const data = new FormData(form);
 
     try {
-      await fetch('/.netlify/functions/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: data.get('name'),
-          contact: data.get('contact'),
-          message: data.get('message'),
-        }),
+      await sendToTelegram({
+        name: String(data.get('name') || ''),
+        contact: String(data.get('contact') || ''),
+        message: String(data.get('message') || '') || undefined,
       });
     } catch {
       // fail silently — user still sees success
