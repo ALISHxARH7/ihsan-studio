@@ -14,7 +14,12 @@ exports.handler = async (event) => {
 
   let data;
   try {
-    data = JSON.parse(event.body || '{}');
+    // Netlify sometimes base64-encodes the body for UTF-8 content
+    let bodyStr = event.body || '{}';
+    if (event.isBase64Encoded) {
+      bodyStr = Buffer.from(bodyStr, 'base64').toString('utf-8');
+    }
+    data = JSON.parse(bodyStr);
   } catch {
     return { statusCode: 400, headers: CORS_HEADERS, body: 'Bad Request' };
   }
@@ -24,45 +29,46 @@ exports.handler = async (event) => {
   const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
   const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-  // Build message
-  let text = `🏗 <b>Новая заявка — IHSAN STUDIO</b>\n\n`;
-  text += `👤 <b>Имя:</b> ${name || '—'}\n`;
-  text += `📱 <b>Контакт:</b> ${contact || '—'}\n`;
+  // Build plain text message (no HTML parse_mode — avoids encoding issues with Cyrillic)
+  let text = '🏗 Новая заявка — IHSAN STUDIO\n\n';
+  text += `👤 Имя: ${name || '—'}\n`;
+  text += `📱 Контакт: ${contact || '—'}\n`;
   if (message) {
-    text += `💬 <b>Сообщение:</b> ${message}\n`;
+    text += `💬 Сообщение: ${message}\n`;
   }
 
   if (calculatorData) {
     const { tab, objectType, area, services, total } = calculatorData;
-    text += `\n<b>━━ Расчёт из калькулятора ━━</b>\n`;
-    text += `📋 <b>Тип проекта:</b> ${tab === 'design' ? 'Дизайн интерьера' : 'Архитектура'}\n`;
-    text += `🏢 <b>Тип объекта:</b> ${objectType}\n`;
-    if (area) text += `📐 <b>Площадь:</b> ${area} м²\n`;
+    text += '\n━━ Расчёт из калькулятора ━━\n';
+    text += `📋 Тип: ${tab === 'design' ? 'Дизайн интерьера' : 'Архитектура'}\n`;
+    text += `🏢 Объект: ${objectType}\n`;
+    if (area) text += `📐 Площадь: ${area} м2\n`;
     if (services && services.length > 0) {
-      text += `\n<b>Выбранные услуги:</b>\n`;
+      text += '\nУслуги:\n';
       services.forEach((s) => {
-        text += `  • ${s.name} — <i>${s.price}</i>\n`;
+        text += `  • ${s.name} — ${s.price}\n`;
       });
     }
-    text += `\n💰 <b>Предв. стоимость: ${total} ₸</b>\n`;
+    text += `\n💰 Стоимость: ${total} тенге\n`;
   }
 
-  // Send to Telegram (even if not configured, return success to user)
+  // Send to Telegram
   if (BOT_TOKEN && CHAT_ID) {
     try {
       const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'HTML' }),
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text }),
       });
       if (!res.ok) {
-        console.error('Telegram API error:', await res.text());
+        const errText = await res.text();
+        console.error('Telegram API error:', errText);
       }
     } catch (err) {
-      console.error('Telegram send failed:', err);
+      console.error('Telegram send failed:', err.message);
     }
   } else {
-    console.warn('TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not set');
+    console.warn('Env vars missing: BOT_TOKEN=' + !!BOT_TOKEN + ' CHAT_ID=' + !!CHAT_ID);
   }
 
   return {
