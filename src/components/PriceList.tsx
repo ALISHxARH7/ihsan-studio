@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { designServices, objectTypesDesign, formatPrice } from '@/data/pricing';
+import { designServices, formatPrice } from '@/data/pricing';
 
 const serviceCards = [
   {
@@ -140,52 +140,6 @@ export default function PriceList() {
           ))}
         </div>
 
-        {/* Object type price table */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="mt-16 overflow-x-auto"
-        >
-          <table className="w-full min-w-[600px] text-sm">
-            <thead>
-              <tr className="border-b border-warm-gray-dark/40">
-                <th className="text-left py-4 text-[11px] tracking-[0.15em] text-muted uppercase font-normal">
-                  Услуга
-                </th>
-                {objectTypesDesign.map((t) => (
-                  <th
-                    key={t}
-                    className="text-right py-4 text-[11px] tracking-[0.15em] text-muted uppercase font-normal px-3"
-                  >
-                    {t}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {designServices.map((svc) => (
-                <tr key={svc.name} className="border-b border-warm-gray-dark/20">
-                  <td className="py-3 text-graphite">{svc.name}</td>
-                  {objectTypesDesign.map((t) => (
-                    <td key={t} className="py-3 text-right text-muted-dark px-3">
-                      {svc.prices[t] === 0 ? (
-                        <span className="text-accent text-xs">Бесплатно</span>
-                      ) : (
-                        <>{formatPrice(svc.prices[t])} ₸</>
-                      )}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </motion.div>
-
-        <p className="text-center text-muted text-xs mt-8 tracking-wider">
-          Точная стоимость рассчитывается индивидуально после консультации
-        </p>
       </div>
     </section>
   );
