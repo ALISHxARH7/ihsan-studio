@@ -1,0 +1,62 @@
+[
+  {
+    "id": "1",
+    "title": "Резиденция на Аль-Фараби",
+    "category": "Архитектура",
+    "description": "Современная вилла с панорамным остеклением и минималистичной геометрией фасадов",
+    "image": "/portfolio/project-1.jpg",
+    "year": "2024",
+    "area": "380 м²",
+    "aspect": "tall"
+  },
+  {
+    "id": "2",
+    "title": "Квартира в ЖК Esentai",
+    "category": "Интерьер",
+    "description": "Лаконичный интерьер в тёплой палитре натуральных материалов",
+    "image": "/portfolio/project-2.jpg",
+    "year": "2024",
+    "area": "145 м²",
+    "aspect": "wide"
+  },
+  {
+    "id": "3",
+    "title": "Офис IT-компании",
+    "category": "Коммерция",
+    "description": "Открытое пространство для работы и творчества с гибкой планировкой",
+    "image": "/portfolio/project-3.jpg",
+    "year": "2023",
+    "area": "520 м²",
+    "aspect": "tall"
+  },
+  {
+    "id": "4",
+    "title": "Ресторан Silk",
+    "category": "Коммерция",
+    "description": "Интерьер с отсылками к Шёлковому пути в современной интерпретации",
+    "image": "/portfolio/project-4.jpg",
+    "year": "2024",
+    "area": "210 м²",
+    "aspect": "wide"
+  },
+  {
+    "id": "5",
+    "title": "Загородный дом",
+    "category": "Архитектура",
+    "description": "Интеграция архитектуры в горный ландшафт с минимальным вмешательством",
+    "image": "/portfolio/project-5.jpg",
+    "year": "2023",
+    "area": "450 м²",
+    "aspect": "tall"
+  },
+  {
+    "id": "6",
+    "title": "Пентхаус Sky Lounge",
+    "category": "Интерьер",
+    "description": "Двухуровневый пентхаус с террасой и видом на горы Заилийского Алатау",
+    "image": "/portfolio/project-6.jpg",
+    "year": "2024",
+    "area": "230 м²",
+    "aspect": "wide"
+  }
+]
